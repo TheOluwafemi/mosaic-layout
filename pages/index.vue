@@ -27,18 +27,22 @@ export default {
       page: 1,
     }
   },
+
   fetchOnServer: false,
 
   async fetch() {
     const { env } = this.$nuxt.context
+    const url = new URL('https://api.unsplash.com/photos')
+    const urlParams = new URLSearchParams({
+      client_id: env.NUXT_ENV_UNSPLASH_ACCESS_KEY,
+      page: this.page,
+      per_page: this.limit,
+    }).toString();
     try {
-      const response = await fetch(
-        `https://api.unsplash.com/photos?client_id=${env.NUXT_ENV_UNSPLASH_ACCESS_KEY}&page=${this.page}&per_page=${this.limit}`
+      const response = await fetch(`${url}?${urlParams}`
       )
-
       if (!response.ok)
-        return console.error('An error occurred, please refresh to try again')
-
+        return console.error('An error occurred while trying to fetch images')
       this.content = [...this.content, ...(await response.json())]
       this.page++
     } catch (error) {
@@ -59,20 +63,6 @@ export default {
       ]
       return classes[index % classes.length]
     },
-    //     round() {
-    //       tags_occurrences = {"xs": 2, "sm": 1, "md": 1, "lg": 1, "xl": 1}
-
-    // cards = [i for i in range(10)]
-
-    // tag_index = 0
-    // for i, card in enumerate(cards):
-    //     tag = list(tags_occurrences.keys())[tag_index % len(tags_occurrences)]
-    //     print(f"Card {card} is tagged with {tag}")
-    //     tags_occurrences[tag]-=1
-    //     if tags_occurrences[tag] == 0:
-    //         tag_index += 1
-
-    //     }
   },
 }
 </script>
